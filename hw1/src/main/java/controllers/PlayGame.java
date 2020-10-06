@@ -3,16 +3,20 @@ package controllers;
 import com.google.gson.Gson;
 import io.javalin.Javalin;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Queue;
 import models.GameBoard;
 import models.Message;
 import org.eclipse.jetty.websocket.api.Session;
+import utils.DatabaseJdbc;
 
 public class PlayGame {
 
   private static final int PORT_NUMBER = 8080;
 
   private static Javalin app;
+  
+  private static DatabaseJdbc db = new DatabaseJdbc();
 
   final static GameBoard board = new GameBoard();
 
@@ -38,6 +42,8 @@ public class PlayGame {
     });
     
     app.get("/newgame", ctx -> {
+      Connection c = db.createConnection();
+      db.createTable(c);
       ctx.redirect("/tictactoe.html");
     });
     
