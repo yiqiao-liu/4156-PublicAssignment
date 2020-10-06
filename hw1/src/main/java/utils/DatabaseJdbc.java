@@ -2,6 +2,7 @@ package utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import models.Move;
@@ -80,5 +81,35 @@ public class DatabaseJdbc {
     System.out.println("Records created successfully");
     return true;
   }
+  
+  public boolean fetchData(Connection c) {
+    Statement stmt = null;
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully");
+
+      stmt = c.createStatement();
+      ResultSet rs = stmt.executeQuery( "SELECT * FROM MOVEINFO;" );
+      
+      while ( rs.next() ) {
+      
+      }
+      rs.close();
+      stmt.close();
+      c.close();
+    } catch ( Exception e ) {
+      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+      return false;
+    }
+    System.out.println("Operation done successfully");
+    return true;
+  }
+  
+  
+  
+  }
+
+
+
 
 }
