@@ -10,16 +10,10 @@ public class Move {
   
   /* below are getters and setters -------------------- */
   
-  public void setplayer() {
-    player = new Player();
-  }
-  
-  public void setmoveX(int row) {
-    moveX = row;
-  }
-  
-  public void setmoveY(int col) {
-    moveY = col;
+  public Move(Player p, int x, int y) {
+    player = p;
+    moveX = x;
+    moveY = y;
   }
   
   public Player getplayer() {
