@@ -14,11 +14,6 @@ public class DatabaseTest {
   DatabaseJdbc db = new DatabaseJdbc();
 
   @Test
-  public void testCreateConnection() {
-    db.createConnection();
-  }
-
-  @Test
   public void testCreateMoveTable() {
     Connection conc = db.createConnection();
     assertEquals(true, db.createMoveTable(conc));

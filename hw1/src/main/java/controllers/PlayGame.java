@@ -21,8 +21,6 @@ public class PlayGame {
   
   private static DatabaseJdbc db = new DatabaseJdbc();
 
-  //final static GameBoard board = new GameBoard();
-
   /** Main method of the application.
    * @param args Command line arguments
    */
@@ -71,20 +69,19 @@ public class PlayGame {
     });
     
     app.get("/newgame", ctx -> {
+      /* clean the database */
       Connection c = db.createConnection();
       db.deleteAllData(c);
+
+      ctx.redirect("/tictactoe.html");
+      
+      /* update the database */
       Connection cc = db.createConnection();
       db.createPlayerTable(cc);
       db.createMoveTable(cc);
-       /*else {
-        db.createPlayerTable(c);
-        db.createMoveTable(c);
-      }*/
-      ctx.redirect("/tictactoe.html");
     });
     
     app.post("/startgame", ctx -> {
-      
       String body = ctx.body();
       char type = ' ';
       for (int i = 0; i < body.length(); i++) {
@@ -97,15 +94,18 @@ public class PlayGame {
       }
       GameBoard board = new GameBoard();
       board.startgame(type);
-      Connection c = db.createConnection();
-      db.addPlayerData(c, board.getP1());
       
       Gson gson = new Gson();
       String json = gson.toJson(board); 
       ctx.result(json);
+      
+      /* update the database */
+      Connection c = db.createConnection();
+      db.addPlayerData(c, board.getP1());
     });
     
     app.get("/joingame", ctx -> {
+      /* add data from database back to board */
       GameBoard board = new GameBoard();
       Connection c = db.createConnection();
       List<int[]> playerdata = db.fetchPlayerData(c);
@@ -122,18 +122,19 @@ public class PlayGame {
           }
         }
       }
-      
       board.joingame();
-      Connection cc = db.createConnection();
-      db.addPlayerData(cc, board.getP2());
+      /* ends */
       
       ctx.redirect("/tictactoe.html?p=2");
       
       Gson gson = new Gson();
       String json = gson.toJson(board); 
       ctx.result(json);
-      
       sendGameBoardToAllPlayers(json);
+      
+      /* update the database */
+      Connection cc = db.createConnection();
+      db.addPlayerData(cc, board.getP2());
     });
     
     app.post("/move/:playerid", ctx -> {
@@ -192,21 +193,11 @@ public class PlayGame {
       /* ends */
       
       /* updates the board and create corresponding message objects */
+      int update = 0;
       Message msg = new Message();
       if (board.setter(playerid, row, col) == true) {
         msg.validSetter();
-        Player p = new Player();
-        /* update the database */
-        if (playerid == 1) {
-          p = board.getP1();
-        } else {
-          p = board.getP2();
-        }
-        Move move = new Move(p, row, col);
-        Connection cc = db.createConnection();
-        db.addMoveData(cc, move);
-        db.fetchMoveData(cc);
-        /* database update ends here */
+        update = 1;
       } else {
         msg.invalidSetter();
       }
@@ -216,7 +207,21 @@ public class PlayGame {
       
       Gson gson = new Gson();
       String json = gson.toJson(board);
-      sendGameBoardToAllPlayers(json);    
+      sendGameBoardToAllPlayers(json);
+      /* ends */
+      
+      if (update == 1) {
+        /* update the database */
+        Player p = new Player();
+        if (playerid == 1) {
+          p = board.getP1();
+        } else {
+          p = board.getP2();
+        }
+        Move move = new Move(p, row, col);
+        Connection cc = db.createConnection();
+        db.addMoveData(cc, move);
+      }
     });
     
     
