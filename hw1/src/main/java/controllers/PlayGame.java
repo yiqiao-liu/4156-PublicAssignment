@@ -72,14 +72,14 @@ public class PlayGame {
     
     app.get("/newgame", ctx -> {
       Connection c = db.createConnection();
-      if (db.deleteAllData(c) == true) {
-        Connection cc = db.createConnection();
-        db.createPlayerTable(cc);
-        db.createMoveTable(cc);
-      } else {
+      db.deleteAllData(c);
+      Connection cc = db.createConnection();
+      db.createPlayerTable(cc);
+      db.createMoveTable(cc);
+       /*else {
         db.createPlayerTable(c);
         db.createMoveTable(c);
-      }
+      }*/
       ctx.redirect("/tictactoe.html");
     });
     
@@ -205,6 +205,7 @@ public class PlayGame {
         Move move = new Move(p, row, col);
         Connection cc = db.createConnection();
         db.addMoveData(cc, move);
+        db.fetchMoveData(cc);
         /* database update ends here */
       } else {
         msg.invalidSetter();

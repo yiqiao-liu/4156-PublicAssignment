@@ -2,6 +2,8 @@ package integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.sql.Connection;
+
 import com.google.gson.Gson;
 import controllers.PlayGame;
 import kong.unirest.HttpResponse;
@@ -9,6 +11,8 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import models.GameBoard;
 import models.Player;
+import utils.DatabaseJdbc;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -192,7 +196,7 @@ public class GameTest {
     
     System.out.println("Test Draw Case");
   }
-
+  
   /**
    * This will run every time after a test has finished.
    */
